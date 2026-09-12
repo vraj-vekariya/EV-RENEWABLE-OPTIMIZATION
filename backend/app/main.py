@@ -32,3 +32,9 @@ def get_stations(db: Session = Depends(get_db)):
 def get_grid_conditions(db: Session = Depends(get_db)):
     conditions = db.query(models.GridCondition).order_by(models.GridCondition.time_slot).all()
     return conditions
+
+from app.services.optimization import optimize_charging
+
+@app.post("/api/optimize", response_model=schemas.OptimizationResponse)
+def optimize_route(request: schemas.UserRequest, db: Session = Depends(get_db)):
+    return optimize_charging(db, request)
